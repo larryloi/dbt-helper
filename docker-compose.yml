@@ -1,0 +1,113 @@
+#version: '3.8'
+services:
+
+  dbt:
+    #build: .
+    image: quay.io/larryloi/dbt-mssql:0.1.0
+    #image: quay.io/larryloi/dbt-starrocks:0.1.0
+    #profiles: ["starrocks","mssql","all"]
+    networks:
+      - integration
+    volumes:
+      - ./.dbt/:/root/.dbt/
+      - ./:/dbt
+    working_dir: /dbt
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true
+
+
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-CU10-ubuntu-22.04
+    profiles: ["mssql"]
+    hostname: mssql
+    user: root
+    container_name: mssql
+    networks:
+      - integration
+    restart: always
+    env_file:
+      - .env
+    environment:
+      TZ: Asia/Macau
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Abcd1234
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_LOG_DIR: /var/opt/mssql/log
+      MSSQL_BACKUP_DIR: /var/opt/mssql/backup
+      MSSQL_MEMORY_LIMIT_MB: 2048
+      MSSQL_AGENT_ENABLED: 1
+      #MSSQL_COLLATION: Latin1_General_CS_AS
+    working_dir: /home/mssql
+    ports:
+      - 1433:1433
+    volumes:
+      - ./scripts/mssql:/home/mssql
+      - sql-server-data:/var/opt/mssql/
+      - sqldata:/var/opt/mssql/data
+      - sqllog:/var/opt/mssql/log
+      - sqlbackup:/var/opt/mssql/backup
+
+
+  starrocks-fe-0:
+    image: starrocks/fe-ubuntu:latest
+    profiles: ["starrocks"]
+    hostname: starrocks-fe-0
+    container_name: starrocks-fe-0
+    command:
+      - /bin/bash
+      - -c
+      - |
+        /opt/starrocks/fe_entrypoint.sh starrocks-fe-0
+    environment:
+      - HOST_TYPE=FQDN
+      - TZ=Asia/Macau
+    ports:
+      - "8030:8030"
+      - "9020:9020"
+      - "9030:9030"
+    volumes:
+       - ./scripts/starrocks:/opt/starrocks/scripts
+       - singleton_fe0_data:/opt/starrocks/fe/meta
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9030"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  starrocks-be-0:
+    image: starrocks/be-ubuntu:latest
+    profiles: ["starrocks", "all"]
+    hostname: starrocks-be-0
+    container_name: starrocks-be-0
+    command:
+      - /bin/bash
+      - -c
+      - |
+        /opt/starrocks/be_entrypoint.sh starrocks-fe-0
+    environment:
+      - HOST_TYPE=FQDN
+      - TZ=Asia/Macau
+    ports:
+      - "8040:8040"
+    depends_on:
+      - starrocks-fe-0
+    volumes:
+      - singleton_be0_data:/opt/starrocks/be/storage
+
+
+
+volumes:
+  sql-server-data:
+    driver: local
+  sqldata:
+  sqllog:
+  sqlbackup:
+  singleton_fe0_data:
+  singleton_be0_data:
+
+networks:
+  integration:
+    driver: bridge
+
