@@ -7,3 +7,5 @@ CREATE USER dbt@'%' IDENTIFIED WITH mysql_native_password BY 'Abcd1234' DEFAULT 
 GRANT ALL ON CATALOG default_catalog TO 'dbt'@'%' ;
 
 CREATE DATABASE DWD;
+
+CREATE DATABASE dbt;

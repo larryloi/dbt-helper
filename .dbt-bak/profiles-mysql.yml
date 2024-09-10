@@ -1,0 +1,12 @@
+tmpl_mysql:
+  target: dev
+  outputs:
+    dev:
+      type: mysql
+      server: mysql
+      port: 3306  # optional
+      database: dbt # optional, should be same as schema
+      schema: dbt
+      username: dbt
+      password: Abcd1234
+      driver: MySQL ODBC 8.0 ANSI Driver

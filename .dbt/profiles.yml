@@ -1,0 +1,41 @@
+starrocks1:
+  outputs:
+    dev:
+      host: starrocks-fe-0
+      password: Abcd1234
+      port: 9030
+      schema: dbt
+      type: starrocks
+      username: dbt
+  target: dev
+starrocks2:
+  outputs:
+    dev:
+      host: starrocks-fe-0
+      password: Abcd1234
+      port: 9030
+      schema: dbt
+      type: starrocks
+      username: dbt
+      version: ''
+  target: dev
+starrocks3:
+  outputs:
+    dev:
+      host: starrocks-fe-0
+      password: Abcd1234
+      port: 9030
+      schema: dbt
+      type: starrocks
+      username: dbt
+  target: dev
+tmpl_starrocks:
+  outputs:
+    dev:
+      host: starrocks-fe-0
+      password: Abcd1234
+      port: 9030
+      schema: dbt
+      type: starrocks
+      username: dbt
+  target: dev

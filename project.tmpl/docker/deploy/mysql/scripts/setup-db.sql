@@ -1,0 +1,4 @@
+
+CREATE USER 'dbt'@'%'IDENTIFIED WITH mysql_native_password BY 'Abcd1234';
+GRANT ALL PRIVILEGES ON *.* TO 'dbt'@'%';
+FLUSH PRIVILEGES;

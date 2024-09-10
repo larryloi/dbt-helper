@@ -1,0 +1,10 @@
+starrocks:
+  outputs:
+    dev:
+      host: ubt204
+      password: Abcd1234
+      port: 9030
+      schema: dbt
+      type: starrocks
+      username: dbt
+  target: dev

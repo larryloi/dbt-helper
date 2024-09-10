@@ -1,5 +1,8 @@
 include Makefile.env
 
+env:
+	echo $(DEV_DB_FE_IMAGE)
+
 build.base:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .
 
@@ -75,34 +78,3 @@ run:
 ps:
 	docker compose ps
 
-
-# create.project.starrocks project=proj app=aaa
-create.project.starrocks: check_project_nulity check_app_nulity check_target_existence
-	@project_path=../dbt_projects/$(project)_$(app) && \
-	mkdir -p ../dbt_projects/$${project_path}/src && \
-	cp -rp project.tmpl/src/tmpl_starrocks/* $${project_path}/src  && \
-	cp -rp project.tmpl/src/.dbt_starrocks $${project_path}/src/.dbt && \
-	cp -rp project.tmpl/docker $${project_path}&& \
-	find $${project_path}/src -type f -exec sed -i 's/tmpl_starrocks/$(project)_$(app)/g' {} \;
-
-# 	echo $${project_path} && \
-
-check_project_nulity:
-	@[ -z "$(project)" ] && \
-		{ echo "Error! Project is NOT specified."; exit 1; } || \
-		exit 0
-
-check_app_nulity:
-	@[ -z "$(app)" ] && \
-		{ echo "Error! App path is NOT specified."; exit 1; } || \
-		exit 0
-
-check_target_nulity:
-	@[ -z "$(target)" ] && \
-		{ echo "Error! Target path is NOT specified."; exit 1; } || \
-		exit 0
-
-check_target_existence:
-	@[ -d ../dbt_projects/$(project)_$(app) ] && \
-		{ echo "Error! Target path already exists: ../dbt_projects/$(project)_$(app)"; exit 1; } || \
-		exit 0
