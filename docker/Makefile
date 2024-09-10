@@ -1,4 +1,7 @@
-# include Makefile.env
+include Makefile.env
+
+env:
+	echo $(PROJECT_NAME)
 
 build.base:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .
@@ -76,7 +79,7 @@ ps:
 	docker compose ps
 
 
-# make create.project.starrocks project=proj app=aaa
+# create.project.starrocks project=proj app=aaa
 create.project.starrocks: check_project_nulity check_app_nulity check_target_existence
 	@project_path=../dbt_projects/$(project)_$(app) && \
 	mkdir -p ../dbt_projects/$${project_path}/src && \
