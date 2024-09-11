@@ -19,7 +19,7 @@ FROM ghcr.io/dbt-labs/dbt-core:1.6.17 AS starrocks
     RUN apt-get update && apt-get install -y unixodbc-dev curl gnupg
     RUN apt-get update 
     RUN pip install dbt-starrocks
-    
+
     ENTRYPOINT ["/bin/bash"]
 
     

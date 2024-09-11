@@ -1,4 +1,4 @@
-test/*
+#test/*
 
 # But do not ignore the folder itself
-!test/
+#!test/
