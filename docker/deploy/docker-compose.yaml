@@ -5,7 +5,8 @@ services:
     #build: .
     # image: quay.io/larryloi/dbt-mysql:0.1.0
     # image: quay.io/larryloi/dbt-mssql:0.1.0
-    image: quay.io/larryloi/dbt-starrocks:0.1.0
+    #image: quay.io/larryloi/dbt-starrocks:1.8.0c
+    image: ${IMAGE_REPO_ROOT}/${PROJECT_NAME}-${DEV_DB_TYPE}:${APP_VERSION}
     environment:
       - TZ=Asia/Macau
     #profiles: ["starrocks","mssql","all"]

@@ -1,0 +1,46 @@
+#version: '3.8'
+services:
+
+  mssql:
+    # image: mcr.microsoft.com/mssql/server:2022-CU10-ubuntu-22.04
+    image: ${DEV_DB_IMAGE}
+    profiles: ["mssql"]
+    hostname: mssql
+    user: root
+    container_name: mssql
+    networks:
+      - development
+    restart: always
+    environment:
+      TZ: Asia/Macau
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_DATABASE: ${DEV_DB_NAME}
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_LOG_DIR: /var/opt/mssql/log
+      MSSQL_BACKUP_DIR: /var/opt/mssql/backup
+      MSSQL_MEMORY_LIMIT_MB: 2048
+      MSSQL_AGENT_ENABLED: 1
+      #MSSQL_COLLATION: Latin1_General_CS_AS
+    working_dir: /home/mssql
+    ports:
+      - 1433:1433
+    volumes:
+      - ./mssql/scripts:/home/mssql
+      - sql-server-data:/var/opt/mssql/
+      - sqldata:/var/opt/mssql/data
+      - sqllog:/var/opt/mssql/log
+      - sqlbackup:/var/opt/mssql/backup
+
+
+volumes:
+  sql-server-data:
+    driver: local
+  sqldata:
+  sqllog:
+  sqlbackup:
+
+networks:
+  development:
+    driver: bridge
+
