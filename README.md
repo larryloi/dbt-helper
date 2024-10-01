@@ -130,3 +130,86 @@ Now, Start your dbt journey.
 ---
 **Referrence:**
 > https://www.getdbt.com/
+
+
+<br><br>
+## DBT Commands
+### Basic Commands
+**Show Version** display the current version of dbt
+```shell
+root@dc7f708e9c65:/dbt# dbt --version
+Core:
+  - installed: 1.8.6
+  - latest:    1.8.7 - Update available!
+
+  Your version of dbt-core is out of date!
+  You can find instructions for upgrading here:
+  https://docs.getdbt.com/docs/installation
+
+Plugins:
+  - fabric:    1.8.7 - Up to date!
+  - sqlserver: 1.8.4 - Up to date!
+
+```
+
+**Run Models:** Executes the models in your project
+```shell
+dbt run
+```
+
+**Test Models:** Runs tests on your models to ensure data quality.
+```shell
+dbt test
+```
+
+**Compile Models:** Converts your dbt models with their Jinja references into raw SQL.
+```shell
+dbt compile
+```
+
+**Generate Documentation:** Creates documentation for your project.
+```shell
+dbt docs generate
+```
+
+**Serve Documentation:** Serves the generated documentation locally.
+```shell
+dbt docs serve
+```
+
+### Advanced Commands
+**Source Freshness:** Checks the freshness of your data sources.
+```shell
+dbt source freshness
+```
+
+**Snapshot:** Takes a snapshot of your data at a point in time.
+```shell
+dbt snapshot
+```
+
+**Debug:** Provides debugging information to help troubleshoot issues.
+```shell
+dbt debug
+```
+
+**Build Everything:** Builds all models, tests, snapshots, and seeds in your project.
+```shell
+dbt build
+```
+
+### Utility Commands
+**Init:** Initializes a new dbt project.
+```shell
+dbt init
+```
+
+**Clean:** Removes all files in the dbt target directory.
+```shell
+dbt clean
+```
+
+**Seed:** Loads CSV files into your data warehouse.
+```shell
+dbt seed
+```

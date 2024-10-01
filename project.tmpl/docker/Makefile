@@ -1,7 +1,7 @@
 include Makefile.env
 
-env:
-	echo $(DEV_DB_FE_IMAGE)
+vars:
+	env
 
 build.base:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .

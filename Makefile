@@ -1,82 +1,10 @@
-# include Makefile.env
-
-# build.base:
-# 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .
-# 
-# build.app:
-# 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VER) --target app .
-# 
-# build.mssql:
-# 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mssql:0.1.0 --target mssql .
-# 
-# build.mysql:
-# 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mysql:0.1.0 --target mysql .
-# 
-# build.starrocks:
-# 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-starrocks:0.1.0 --target starrocks .
-# 
-# 
-# 
-# dbt.up:
-# 	docker compose up -d dbt
-# 
-# dbt.down:
-# 	docker compose down dbt
-# 
-# dbt.shell:
-# 	docker compose exec dbt bash
-# 
-# 
-# 
-# mssql.up:
-# 	docker compose up -d mssql
-# 
-# mssql.down:
-# 	docker compose down mssql
-# 
-# mssql.shell:
-# 	docker compose exec mssql bash
-# 
-# 
-# 
-# mysql.up:
-# 	docker compose up -d mysql
-# 
-# mysql.down:
-# 	docker compose down mysql
-# 
-# mysql.shell:
-# 	docker compose exec mysql bash
-# 
-# 
-# 
-# starrocks.up:
-# 	docker compose up -d starrocks-be-0
-# 	docker compose up -d starrocks-fe-0
-# 
-# starrocks.down:
-# 	docker compose down starrocks-fe-0
-# 	docker compose down starrocks-be-0
-# 
-# starrocks.shell:
-# 	docker compose exec starrocks-fe-0 bash
-# 
-# 
-# 
-# run:
-# 	docker run --rm -it \
-# 	-v ./.dbt/:/root/.dbt/ \
-# 	-v ./:/dbt/ \
-# 	$(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER)
-
-#run:
-#	docker run --rm -it -v ./:/usr/app/dbt/ ghcr.io/dbt-labs/dbt-core:1.8.6
-
-# ps:
-# 	docker compose ps
+include Makefile.env
 
 
-# make create.project.starrocks project=proj app=aaa
+vars:
+	env
+
+# make create.project.starrocks project=dws app=aec
 create.project.starrocks: check_project_nulity check_app_nulity check_target_existence
 	@project_path=../dbt_projects/$(project)_$(app) && \
 	mkdir -p ../dbt_projects/$${project_path}/src && \
@@ -85,7 +13,21 @@ create.project.starrocks: check_project_nulity check_app_nulity check_target_exi
 	cp -rp project.tmpl/docker $${project_path}&& \
 	find $${project_path}/src -type f -exec sed -i 's/tmpl_starrocks/$(project)_$(app)/g' {} \;
 
-# 	echo $${project_path} && \
+
+# make create.project.mssql project=dwd app=aec
+create.project.mssql: check_project_nulity check_app_nulity check_target_existence
+	@project_path=../dbt_projects/$(project)_$(app) && \
+	mkdir -p ../dbt_projects/$${project_path}/src && \
+	cp -rp project.tmpl/src/tmpl_mssql/* $${project_path}/src  && \
+	cp -rp project.tmpl/src/.dbt_mssql $${project_path}/src/.dbt && \
+	cp -rp project.tmpl/docker $${project_path}&& \
+	find $${project_path}/src -type f -exec sed -i 's/tmpl_mssql/$(project)_$(app)/g' {} \; && \
+	find $${project_path}/docker -type f -exec sed -i 's/tmpl_db_type/mssql/g' {} \; && \
+	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BASE_VERSION/$(DEV_IMAGE_VERSION)/g' {} \; && \
+	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_proj/$(project)/g' {} \; && \
+	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_app/$(app)/g' {} \;
+
+
 
 check_project_nulity:
 	@[ -z "$(project)" ] && \

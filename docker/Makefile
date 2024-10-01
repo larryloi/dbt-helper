@@ -1,7 +1,9 @@
 include Makefile.env
 
-env:
-	echo $(PROJECT_NAME)
+
+vars:
+	env
+
 
 build.base:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .
@@ -10,16 +12,17 @@ build.app:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VER) --target app .
 
 build.mssql:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mssql:$(APP_VERSION) --target mssql .
+# @${MAKE} -C build/rc build.mssql
+	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mssql .
 
 build.mysql:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mysql:$(APP_VERSION) --target mysql .
+	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mysql .
 
 build.starrocks:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-starrocks:1.8.0c --target starrocks .
+	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target starrocks .
 
 test:
-	echo $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mssql:$(APP_VERSION)
+	echo $(IMAGE_REPO_ROOT)/$(PROJECT_NAME):$(APP_VERSION)-$(IMAGE_TAG) 
 
 dbt.up:
 	docker compose up -d dbt
