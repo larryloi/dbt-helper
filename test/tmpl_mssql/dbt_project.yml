@@ -32,12 +32,5 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   tmpl_mssql:
     # Config indicated by + and applies to all files under models/example/
-    +materialized: view
-    #example:
-    #  +materialized: view
-    orders:
-      +materialized: table
-      order_sum01:
-        materialized: view
-      order_sum02:
-        materialized: table
+    example:
+      +materialized: view

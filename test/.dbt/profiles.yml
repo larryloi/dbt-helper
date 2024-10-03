@@ -1,15 +1,15 @@
-mssql_test01:
-  target: dev
+tmpl_mssql:
   outputs:
     dev:
-      type: sqlserver
-      driver: 'ODBC Driver 18 for SQL Server'
-      server: mssql
-      port: 1433
       database: DWD
-      schema: DW_ETL
-      user: sa
+      driver: ODBC Driver 18 for SQL Server
+      encrypt: true
       password: Abcd1234
+      port: 1433
+      schema: DW_ETL
+      server: mssql
       threads: 4
-      encrypt: True
-      trust_cert: True
+      trust_cert: true
+      type: sqlserver
+      user: sa
+  target: dev

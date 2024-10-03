@@ -1,0 +1,9 @@
+sources:
+  - name: DWD
+    database: DWD
+    schema: DW_ETL
+    tables:
+        - name: order_dtl
+          identifier: order_details
+
+  

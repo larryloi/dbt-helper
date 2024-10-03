@@ -133,6 +133,32 @@ Now, Start your dbt journey.
 
 
 <br><br>
+## DBT packages
+Add your package in ```packages.yml``` like below
+```yaml
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 1.3.0
+  - git: "https://github.com/calogica/dbt-expectations.git"
+    revision: "1.0.0"
+```
+
+run ```dbt deps```
+```shell
+root@27911a35892b:/dbt# dbt deps
+13:31:43  Running with dbt=1.8.6
+13:31:50  Updating lock file in file path: /dbt/package-lock.yml
+13:31:50  Installing dbt-labs/dbt_utils
+13:31:50  Installed from version 1.3.0
+13:31:50  Up to date!
+13:31:50  Installing https://github.com/calogica/dbt-expectations.git
+13:31:56  Installed from revision c7dc2af8e1bd00b24583bea88cd883b88b706aab
+13:31:56  Installing calogica/dbt_date
+13:31:56  Installed from version 0.10.1
+13:31:56  Up to date!
+```
+
+
 ## DBT Commands
 ### Basic Commands
 **Show Version** display the current version of dbt

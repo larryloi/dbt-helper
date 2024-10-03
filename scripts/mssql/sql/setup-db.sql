@@ -5,6 +5,18 @@ GO
 ALTER LOGIN [dbt] ENABLE
 GO
 
+CREATE DATABASE [inventory];
+GO
+
+USE [inventory];
+GO
+
+EXEC sp_changedbowner 'dbt'
+GO
+
+CREATE SCHEMA INV
+GO
+
 CREATE DATABASE [DWD];
 GO
 

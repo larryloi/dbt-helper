@@ -7,7 +7,8 @@ services:
     # image: quay.io/larryloi/dbt-mssql:0.1.0
     #image: quay.io/larryloi/dbt-starrocks:1.8.0c
     # image: ${IMAGE_REPO_ROOT}/${PROJECT_NAME}-${DEV_DB_TYPE}:${APP_VERSION}
-    image: ${IMAGE_REPO_ROOT}/${PROJECT_NAME}:${APP_VERSION}-${IMAGE_TAG}
+    #image: ${IMAGE_REPO_ROOT}/${PROJECT_NAME}:${APP_VERSION}-${IMAGE_TAG}
+    image: ${DEV_IMAGE}
     environment:
       - TZ=Asia/Macau
     #profiles: ["starrocks","mssql","all"]
