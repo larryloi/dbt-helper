@@ -16,11 +16,31 @@ This is a tools that helping us to create a docker images and development contai
 ## How to use
 ### Building an image:
 
+
+
 The below step shows How to build our development dbt images base on `dbt-helper/docker/Dockerfile`. 
 ```shell
 git clone github.com:larryloi/dbt-helper
+
+```
+
+dbt supports serveral type of database engine. like MySQL, SQL server, PostgreSQL etc. the tool builds docker image with different type of database apdator on top of dbt-core.
+By updating ```DEV_DB_TYPE``` in ```docker/make.env/database.env```, we can specify mssql, mysql , starrocks or psql etc.
+
+```shell
+# Dev database
+DEV_DB_HOST=dev.db
+DEV_DB_NAME=dbt
+DEV_DB_TYPE=mssql
+# DEV_DB_TYPE=mysql
+# DEV_DB_TYPE=psql
+# DEV_DB_TYPE=starrocks
+
+```
+The build the image with below command
+```shell
 cd docker
-make build.starrocks
+make build.mssql
 ```
 
 

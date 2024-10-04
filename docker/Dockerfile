@@ -13,15 +13,15 @@ FROM ghcr.io/dbt-labs/dbt-core:1.8.6 AS mssql
 
 
 
-# FROM ghcr.io/dbt-labs/dbt-core:1.6.17 AS starrocks
+FROM ghcr.io/dbt-labs/dbt-core:1.6.17 AS starrocks
 # FROM ghcr.io/dbt-labs/dbt-core:1.8.3 AS starrocks
-FROM ghcr.io/dbt-labs/dbt-core:1.8.3 AS starrocks
+# FROM ghcr.io/dbt-labs/dbt-core:1.8.3 AS starrocks
 
     RUN apt-get update && apt-get install -y unixodbc-dev curl gnupg
     RUN apt-get update 
     RUN pip install --upgrade pip
-    RUN pip install dbt-core==1.8.3 dbt-starrocks
-    # RUN pip install dbt-starrocks
+    # RUN pip install dbt-core==1.8.3 dbt-starrocks
+    RUN pip install dbt-starrocks
 
     ENTRYPOINT ["/bin/bash"]
 
@@ -31,6 +31,6 @@ FROM ghcr.io/dbt-labs/dbt-core:1.8.6 AS mysql
 
     RUN apt-get update && apt-get install -y unixodbc-dev curl gnupg
     RUN apt-get update 
-    RUN pip install dbt-mysql
+    RUN pip install dbt-mysql==1.7.0
 
     ENTRYPOINT ["/bin/bash"]

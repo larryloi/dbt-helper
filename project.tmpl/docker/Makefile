@@ -9,16 +9,6 @@ build.base:
 build.app:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VER) --target app .
 
-build.mssql:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mssql:0.1.0 --target mssql .
-
-build.mysql:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-mysql:0.1.0 --target mysql .
-
-build.starrocks:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-starrocks:0.1.0 --target starrocks .
-
-
 
 dbt.up:
 	docker compose up -d dbt

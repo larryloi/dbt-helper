@@ -21,8 +21,8 @@ build.mysql:
 build.starrocks:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target starrocks .
 
-test:
-	echo $(IMAGE_REPO_ROOT)/$(PROJECT_NAME):$(APP_VERSION)-$(IMAGE_TAG) 
+build.dbt:
+	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target ${DEV_DB_TYPE} .
 
 dbt.up:
 	docker compose up -d dbt
