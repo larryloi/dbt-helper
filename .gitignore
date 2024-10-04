@@ -1,4 +1,5 @@
-#test/*
-
+test/logs/*
+test/*/logs/*
+test/*/dbt_packages/
 # But do not ignore the folder itself
 #!test/

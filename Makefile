@@ -24,6 +24,7 @@ create.project.mssql: check_project_nulity check_app_nulity check_target_existen
 	find $${project_path}/src -type f -exec sed -i 's/tmpl_mssql/$(project)_$(app)/g' {} \; && \
 	find $${project_path}/docker -type f -exec sed -i 's/tmpl_db_type/mssql/g' {} \; && \
 	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BASE_VERSION/$(DEV_IMAGE_VERSION)/g' {} \; && \
+	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BUILD_NUMBER/$(DEV_IMAGE_BUILD_NUMBER)/g' {} \; && \
 	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_proj/$(project)/g' {} \; && \
 	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_app/$(app)/g' {} \;
 
