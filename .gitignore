@@ -1,5 +1,12 @@
 test/logs/*
-test/*/logs/*
+test/*/target/
+test/*/logs/
 test/*/dbt_packages/
+
+project.tmpl/src/tmpl_mssql/target/
+project.tmpl/src/tmpl_mssql/logs/
+
+project.tmpl/src/tmpl_starrocks/target/
+project.tmpl/src/tmpl_starrocks/logs/
 # But do not ignore the folder itself
 #!test/
