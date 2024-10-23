@@ -13,7 +13,8 @@ build.app:
 
 build.mssql:
 # @${MAKE} -C build/rc build.mssql
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mssql .
+#	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mssql .
+	docker build -t $(DEV_IMAGE) --target mssql .
 
 build.mysql:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mysql .
