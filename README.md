@@ -35,12 +35,24 @@ DEV_DB_TYPE=mssql
 # DEV_DB_TYPE=mysql
 # DEV_DB_TYPE=psql
 # DEV_DB_TYPE=starrocks
+```
+<br>
+
+dbt image version is determined by ```VERSION.${DEV_DB_TYPE}```, the below is sample
 
 ```
+echo VERSION.starrocks
+APP_VERSION=1.7.0
+APP_IMAGE_TAG=rc
+APP_IMAGE_BUILD_NUMBER=1
+```
+<br>
+
+
 The build the image with below command
 ```shell
 cd docker
-make build.mssql
+make build.dbt
 ```
 
 

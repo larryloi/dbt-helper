@@ -4,27 +4,26 @@ include Makefile.env
 vars:
 	env
 
-
-build.base:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .
-
-build.app:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VER) --target app .
-
-build.mssql:
+#build.mssql:
+#	docker build -t $(DEV_IMAGE) --target mssql .
 # @${MAKE} -C build/rc build.mssql
 #	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mssql .
-	docker build -t $(DEV_IMAGE) --target mssql .
 
-build.mysql:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mysql .
+#build.mysql:
+#	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mysql .
 
-build.starrocks:
-	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target starrocks .
+#build.starrocks:
+#	docker build -t $(DEV_IMAGE) --target ${DEV_DB_TYPE} .
+#	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target starrocks .
 
 build.dbt:
 	docker build -t ${DEV_IMAGE} --target ${DEV_DB_TYPE} .
 #	 docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target ${DEV_DB_TYPE} .
+
+
+push:
+	docker push ${DEV_IMAGE} 
+
 
 dbt.up:
 	docker compose up -d dbt

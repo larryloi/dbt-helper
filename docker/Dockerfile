@@ -13,19 +13,17 @@ FROM ghcr.io/dbt-labs/dbt-core:1.8.6 AS mssql
 
 
 
-FROM ghcr.io/dbt-labs/dbt-core:1.6.17 AS starrocks
-# FROM ghcr.io/dbt-labs/dbt-core:1.8.3 AS starrocks
-# FROM ghcr.io/dbt-labs/dbt-core:1.8.3 AS starrocks
+FROM ghcr.io/dbt-labs/dbt-core:1.8.8 AS starrocks
 
     RUN apt-get update && apt-get install -y unixodbc-dev curl gnupg
     RUN apt-get update 
     RUN pip install --upgrade pip
-    # RUN pip install dbt-core==1.8.3 dbt-starrocks
-    RUN pip install dbt-starrocks
+    RUN pip install dbt-starrocks==1.7.0
+    RUN pip install dagster==1.8.13 dagster-webserver==1.8.13 dagster-dbt==0.24.13
 
     ENTRYPOINT ["/bin/bash"]
 
-    
+
 
 FROM ghcr.io/dbt-labs/dbt-core:1.8.6 AS mysql
 
