@@ -82,11 +82,18 @@ make starrocks.shell
 
 ```
 
+#### Start up psql for dagster
+```shell
+make psql.up
+```
+
+
 #### dbt verification
 ```shell
 make dbt.shell
 
 # In dbt container
+cd /opt/dbt
 dbt debug
 dbt run
 ```
@@ -158,6 +165,15 @@ root@35d83990e98f:/dbt#
 ```
 
 Now, Start your dbt journey.
+
+## Embedded Dagster
+Before start up dbt container,
+psql container need to startup first.
+While dbt container startup; dagster user code, dagster-webserver and dagster-daemon
+
+#### dagster path:
+- dagster user code: /opt/dagster/app
+- dagster home: /opt/dagster/dagster_home
 
 ---
 **Referrence:**

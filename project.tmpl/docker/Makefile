@@ -54,7 +54,14 @@ starrocks.down:
 starrocks.shell:
 	docker compose exec starrocks-fe-0 bash
 
+psql.up:
+	docker compose up -d psql
 
+psql.down:
+	docker compose down psql
+
+psql.shell:
+	docker compose exec psql bash
 
 run:
 	docker run --rm -it \
@@ -68,3 +75,8 @@ run:
 ps:
 	docker compose ps
 
+all.down:
+	docker compose down dbt
+	docker compose down starrocks-fe-0
+	docker compose down starrocks-be-0
+	docker compose up -d psql

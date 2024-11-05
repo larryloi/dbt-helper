@@ -1,59 +1,103 @@
-#version: '3.8'
+version: '3.7'
 services:
 
-  dbt:
+#  dbt:
     #build: .
     # image: quay.io/larryloi/dbt-mysql:0.1.0
     # image: quay.io/larryloi/dbt-mssql:0.1.0
     #image: quay.io/larryloi/dbt-starrocks:1.8.0c
     # image: ${IMAGE_REPO_ROOT}/${PROJECT_NAME}-${DEV_DB_TYPE}:${APP_VERSION}
     #image: ${IMAGE_REPO_ROOT}/${PROJECT_NAME}:${APP_VERSION}-${IMAGE_TAG}
+#     image: ${DEV_IMAGE}
+#     environment:
+#       - TZ=Asia/Macau
+#     #profiles: ["starrocks","mssql","all"]
+#     networks:
+#       - development
+#     volumes:
+#       - ../../test/.dbt/:/root/.dbt/
+#       - ../../test/:/dbt
+#     working_dir: /dbt
+#     entrypoint: /bin/bash
+#     stdin_open: true
+#     tty: true
+
+
+
+  dbt:
+#     image: quay.io/larryloi/dbt-starrocks:1.7.0-rc.2
     image: ${DEV_IMAGE}
+    container_name: dbt
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    expose:
+      - "3000"
+      - "4000"
     environment:
-      - TZ=Asia/Macau
-    #profiles: ["starrocks","mssql","all"]
+      DAGSTER_POSTGRES_USER: "postgres_user"
+      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
+      DAGSTER_POSTGRES_DB: "postgres_db"
+    volumes: # Make docker client accessible so we can terminate containers from the webserver
+      - ../../test/dbt/.dbt/:/root/.dbt/
+      - ../../test/dbt/:/opt/dbt
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ../../test/dagster:/opt/dagster
+#      - ./build/dagster/:/opt/dagster/dagster_home/
     networks:
       - development
-    volumes:
-      - ../../test/.dbt/:/root/.dbt/
-      - ../../test/:/dbt
-    working_dir: /dbt
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
+    command:
+      - /bin/bash
+      - -c
+      - |
+        dagster api grpc -h 0.0.0.0 -p 4000 -f ${DAGSTER_APP_HOME}/repo.py & 
+        while ! nc -z 0.0.0.0 4000; do echo 'Waiting for api grpc...'; sleep 1; done;
+        dagster-webserver -h "0.0.0.0" -p "3000" -w ${DAGSTER_HOME}/workspace.yaml &
+        while ! nc -z 0.0.0.0 3000; do echo 'Waiting for webserver...'; sleep 1; done;
+        /usr/local/bin/python3.10 /usr/local/bin/dagster-daemon run
+
+#     command: > 
+#       /bin/sh -c " 
+#       dagster api grpc -h 0.0.0.0 -p 4000 -f ${DAGSTER_APP_HOME}/repo.py & 
+#       while ! nc -z 0.0.0.0 4000; do echo 'Waiting for api grpc...'; sleep 1; done; 
+#       dagster-webserver -h '0.0.0.0' -p '3000' -w ${DAGSTER_HOME}/workspace.yaml & 
+#       while ! nc -z 0.0.0.0 3000; do echo 'Waiting for webserver...'; sleep 1; done; 
+#       /usr/local/bin/python3.10 /usr/local/bin/dagster-daemon run "
+
+#    command:
+#      - /bin/bash
+#      - -c
+#      - |
+#        dagster api grpc -h 0.0.0.0 -p 4000 -f ${DAGSTER_APP_HOME}/repo.py & 
+#        while ! nc -z 0.0.0.0 4000; do echo 'Waiting for api grpc...'; sleep 1; done;
+#        dagster-webserver -h "0.0.0.0" -p "3000" -w ${DAGSTER_HOME}/workspace.yaml &
+#        while ! nc -z 0.0.0.0 3000; do echo 'Waiting for webserver...'; sleep 1; done;
+#        /usr/local/bin/python3.10 /usr/local/bin/dagster-daemon run
+
+
+#@        dagster-daemon run & 
+
+
+#        dagster api grpc -h 0.0.0.0 -p 4000 -f repo.py 
+#        while ! nc -z 0.0.0.0 4000; do echo 'Waiting for api grpc...'; sleep 1; done;
+#        dagster dev &
 
 
 
-#  mssql:
-#    image: mcr.microsoft.com/mssql/server:2022-CU10-ubuntu-22.04
-#    profiles: ["mssql"]
-#    hostname: mssql
-#    user: root
-#    container_name: mssql
-#    networks:
-#      - development
-#    restart: always
-#    env_file:
-#      - .env
-#    environment:
-#      TZ: Asia/Macau
-#      ACCEPT_EULA: Y
-#      SA_PASSWORD: Abcd1234
-#      MSSQL_DATA_DIR: /var/opt/mssql/data
-#      MSSQL_LOG_DIR: /var/opt/mssql/log
-#      MSSQL_BACKUP_DIR: /var/opt/mssql/backup
-#      MSSQL_MEMORY_LIMIT_MB: 2048
-#      MSSQL_AGENT_ENABLED: 1
-#      #MSSQL_COLLATION: Latin1_General_CS_AS
-#    working_dir: /home/mssql
-#    ports:
-#      - 1433:1433
-#    volumes:
-#      - ./scripts/mssql:/home/mssql
-#      - sql-server-data:/var/opt/mssql/
-#      - sqldata:/var/opt/mssql/data
-#      - sqllog:/var/opt/mssql/log
-#      - sqlbackup:/var/opt/mssql/backup
+
+  psql:
+    image: postgres:11
+    container_name: psql
+    environment:
+      POSTGRES_USER: "postgres_user"
+      POSTGRES_PASSWORD: "postgres_password"
+      POSTGRES_DB: "postgres_db"
+    ports:
+      - "5432:5432"
+    networks:
+      - development
+
 
 
 #  mysql:
@@ -76,58 +120,6 @@ services:
 #    networks:
 #      - development
 
-
-#  starrocks-fe-0:
-#    # image: starrocks/fe-ubuntu:latest
-#    image: starrocks/fe-ubuntu:3.3-latest
-#    profiles: ["starrocks"]
-#    hostname: starrocks-fe-0
-#    container_name: starrocks-fe-0
-#    command:
-#      - /bin/bash
-#      - -c
-#      - |
-#        /opt/starrocks/fe_entrypoint.sh starrocks-fe-0
-#    environment:
-#      - HOST_TYPE=FQDN
-#      - TZ=Asia/Macau
-#    networks:
-#      - development
-#    ports:
-#      - "8030:8030"
-#      - "9020:9020"
-#      - "9030:9030"
-#    volumes:
-#       - ./scripts/starrocks:/opt/starrocks/scripts
-#       - singleton_fe0_data:/opt/starrocks/fe/meta
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:9030"]
-#      interval: 5s
-#      timeout: 5s
-#      retries: 30
-#
-#  starrocks-be-0:
-#    #image: starrocks/be-ubuntu:latest
-#    image: starrocks/be-ubuntu:3.3-latest
-#    profiles: ["starrocks", "all"]
-#    hostname: starrocks-be-0
-#    container_name: starrocks-be-0
-#    command:
-#      - /bin/bash
-#      - -c
-#      - |
-#        /opt/starrocks/be_entrypoint.sh starrocks-fe-0
-#    environment:
-#      - HOST_TYPE=FQDN
-#      - TZ=Asia/Macau
-#    networks:
-#      - development
-#    ports:
-#      - "8040:8040"
-#    depends_on:
-#      - starrocks-fe-0
-#    volumes:
-#      - singleton_be0_data:/opt/starrocks/be/storage
 
 
 

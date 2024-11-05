@@ -13,15 +13,15 @@ FROM ghcr.io/dbt-labs/dbt-core:1.8.6 AS mssql
 
 
 
-FROM ghcr.io/dbt-labs/dbt-core:1.8.8 AS starrocks
-
-    RUN apt-get update && apt-get install -y unixodbc-dev curl gnupg
-    RUN apt-get update 
-    RUN pip install --upgrade pip
-    RUN pip install dbt-starrocks==1.7.0
-    RUN pip install dagster==1.8.13 dagster-webserver==1.8.13 dagster-dbt==0.24.13
-
-    ENTRYPOINT ["/bin/bash"]
+# FROM ghcr.io/dbt-labs/dbt-core:1.8.8 AS starrocks
+# 
+#     RUN apt-get update && apt-get install -y unixodbc-dev curl gnupg
+#     RUN apt-get update 
+#     RUN pip install --upgrade pip
+#     RUN pip install dbt-starrocks==1.7.0
+#     RUN pip install dagster==1.8.13 dagster-webserver==1.8.13 dagster-dbt==0.24.13
+# 
+#     ENTRYPOINT ["/bin/bash"]
 
 
 
@@ -32,3 +32,37 @@ FROM ghcr.io/dbt-labs/dbt-core:1.8.6 AS mysql
     RUN pip install dbt-mysql==1.7.0
 
     ENTRYPOINT ["/bin/bash"]
+
+
+
+FROM python:3.10-slim AS starrocks
+
+    RUN apt-get update && apt-get install -y procps netcat-openbsd net-tools
+    RUN pip install --upgrade pip
+    RUN pip install \
+        dagster==1.8.13 \
+        dagster-graphql==1.8.13 \
+        dagster-webserver==1.8.13 \
+        dagster-postgres==0.24.13 \
+        dagster-docker==0.24.13 \
+        dbt-core==1.8.8 dbt-starrocks==1.7.0
+
+    # Dagster libraries to run both dagster-webserver and the dagster-daemon. Does not
+    # need to have access to any pipeline code.
+    # Set $DAGSTER_HOME and copy dagster instance and workspace YAML there
+    ENV DAGSTER_HOME=/opt/dagster/dagster_home/
+    RUN mkdir -p $DAGSTER_HOME
+    COPY build/dagster/dagster.yaml build/dagster/workspace.yaml  $DAGSTER_HOME
+        
+    # Checkout and install dagster libraries needed to run the gRPC server
+    # exposing your repository to dagster-webserver and dagster-daemon, and to load the DagsterInstance
+    ENV DAGSTER_APP_HOME=/opt/dagster/app
+    RUN mkdir -p $DAGSTER_APP_HOME
+    COPY build/dagster/repo.py $DAGSTER_APP_HOME
+
+    ENV DBT_HOME=/opt/dbt
+    RUN mkdir -p $DBT_HOME
+
+    WORKDIR $DAGSTER_HOME
+
+    EXPOSE 3000 4000

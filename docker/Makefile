@@ -4,29 +4,22 @@ include Makefile.env
 vars:
 	env
 
-#build.mssql:
-#	docker build -t $(DEV_IMAGE) --target mssql .
-# @${MAKE} -C build/rc build.mssql
-#	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mssql .
+ps:
+	docker compose ps
 
-#build.mysql:
-#	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target mysql .
-
-#build.starrocks:
-#	docker build -t $(DEV_IMAGE) --target ${DEV_DB_TYPE} .
-#	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target starrocks .
-
-build.dbt:
-	docker build -t ${DEV_IMAGE} --target ${DEV_DB_TYPE} .
-#	 docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(APP_NAME):$(APP_VERSION)-$(IMAGE_TAG) --target ${DEV_DB_TYPE} .
+dbt.build:
+	docker build --platform ${PLATFORM} -t ${DEV_IMAGE} --target ${DEV_DB_TYPE} .
 
 
 push:
 	docker push ${DEV_IMAGE} 
 
+run:
+	docker compose run --rm dbt bash
 
 dbt.up:
-	docker compose up -d dbt
+	docker compose up dbt
+#	docker compose up -d dbt; docker compose logs dbt
 
 dbt.down:
 	docker compose down dbt
@@ -44,6 +37,17 @@ mssql.down:
 
 mssql.shell:
 	docker compose exec mssql bash
+
+
+
+psql.up:
+	docker compose up -d psql
+
+psql.down:
+	docker compose down psql
+
+psql.shell:
+	docker compose exec psql bash
 
 
 
@@ -69,48 +73,15 @@ starrocks.down:
 starrocks.shell:
 	docker compose exec starrocks-fe-0 bash
 
+all.down:
+	docker compose down dbt
+	docker compose down starrocks-fe-0
+	docker compose down starrocks-be-0
+	docker compose up -d psql
 
 
-run:
-	docker run --rm -it \
-	-v ../test/mssql_test/.dbt/:/root/.dbt/ \
-	-v ./test/mssql_test/:/dbt/ \
-	# $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER)
-
-#test:
-#	docker run --rm -it -v ./:/usr/app/dbt/ ghcr.io/dbt-labs/dbt-core:1.8.6
-
-ps:
-	docker compose ps
-
-
-# create.project.starrocks project=proj app=aaa
-# create.project.starrocks: check_project_nulity check_app_nulity check_target_existence
-# 	@project_path=../dbt_projects/$(project)_$(app) && \
-# 	mkdir -p ../dbt_projects/$${project_path}/src && \
-# 	cp -rp project.tmpl/src/tmpl_starrocks/* $${project_path}/src  && \
-# 	cp -rp project.tmpl/src/.dbt_starrocks $${project_path}/src/.dbt && \
-# 	cp -rp project.tmpl/docker $${project_path}&& \
-# 	find $${project_path}/src -type f -exec sed -i 's/tmpl_starrocks/$(project)_$(app)/g' {} \;
-
-# 	echo $${project_path} && \
-
-# check_project_nulity:
-# 	@[ -z "$(project)" ] && \
-# 		{ echo "Error! Project is NOT specified."; exit 1; } || \
-# 		exit 0
-# 
-# check_app_nulity:
-# 	@[ -z "$(app)" ] && \
-# 		{ echo "Error! App path is NOT specified."; exit 1; } || \
-# 		exit 0
-# 
-# check_target_nulity:
-# 	@[ -z "$(target)" ] && \
-# 		{ echo "Error! Target path is NOT specified."; exit 1; } || \
-# 		exit 0
-# 
-# check_target_existence:
-# 	@[ -d ../dbt_projects/$(project)_$(app) ] && \
-# 		{ echo "Error! Target path already exists: ../dbt_projects/$(project)_$(app)"; exit 1; } || \
-# 		exit 0
+# run:
+# 	docker run --rm -it \
+# 	-v ../test/mssql_test/.dbt/:/root/.dbt/ \
+# 	-v ./test/mssql_test/:/dbt/ \
+# 	# $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER)

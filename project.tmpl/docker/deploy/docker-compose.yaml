@@ -5,18 +5,36 @@ services:
     image: ${DEV_IMAGE}
     environment:
       - TZ=Asia/Macau
+      - DAGSTER_POSTGRES_USER=postgres_user
+      - DAGSTER_POSTGRES_PASSWORD=postgres_password
+      - DAGSTER_POSTGRES_DB=postgres_db
     #profiles: ["starrocks","mssql","all"]
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    expose:
+      - "3000"
+      - "4000"
     networks:
       - development
     volumes:
-      - ../../src/.dbt/:/root/.dbt/
-      - ../../src:/dbt
-    working_dir: /dbt
-    entrypoint: /bin/bash
-    stdin_open: true
-    tty: true
-
-
+      - ../../src/dbt/.dbt/:/root/.dbt/
+      - ../../src/dbt:/opt/dbt
+      - ../../src/tmpl_dagster/dagster_home:/opt/dagster/dagster_home
+      - ../../src/tmpl_dagster/app:/opt/dagster/app
+    working_dir: /opt/dagster/dagster_home
+#     entrypoint: /bin/bash
+#     stdin_open: true
+#     tty: true
+    command:
+      - /bin/bash
+      - -c
+      - |
+        dagster api grpc -h 0.0.0.0 -p 4000 -f ${DAGSTER_APP_HOME}/repo.py & 
+        while ! nc -z 0.0.0.0 4000; do echo 'Waiting for api grpc...'; sleep 1; done;
+        dagster-webserver -h "0.0.0.0" -p "3000" -w ${DAGSTER_HOME}/workspace.yaml &
+        while ! nc -z 0.0.0.0 3000; do echo 'Waiting for webserver...'; sleep 1; done;
+        /usr/local/bin/python3.10 /usr/local/bin/dagster-daemon run
 
 
 networks:

@@ -1,0 +1,28 @@
+services:
+
+  mysql:
+    image: mysql/mysql-server:8.0.32-1.2.11-server
+    env_file:
+      - .env
+    container_name: mysql
+    dns:
+      - 192.168.50.199
+    environment:
+      TZ: Asia/Macau
+      MYSQL_ROOT_PASSWORD: Abcd1234
+      MYSQL_DATABASE: dbt
+    ports:
+      - 3306:3306
+    volumes:
+      - ./scripts/mysql:/etc/mysql/conf.d
+      - ./scripts/mysql:/docker-entrypoint-initdb.d
+      - mysql_vol:/var/lib/mysql
+    networks:
+      - development
+
+
+
+
+networks:
+  development:
+    driver: bridge
