@@ -5,7 +5,7 @@ vars:
 	env
 
 ps:
-	docker compose ps
+	docker compose ps -a
 
 dbt.build:
 	docker build --platform ${PLATFORM} -t ${DEV_IMAGE} --target ${DEV_DB_TYPE} .
@@ -18,7 +18,7 @@ run:
 	docker compose run --rm dbt bash
 
 dbt.up:
-	docker compose up dbt
+	docker compose up -d dbt
 #	docker compose up -d dbt; docker compose logs dbt
 
 dbt.down:
@@ -27,6 +27,8 @@ dbt.down:
 dbt.shell:
 	docker compose exec dbt bash
 
+dbt.logs:
+	docker compose logs dbt
 
 
 mssql.up:
@@ -49,6 +51,8 @@ psql.down:
 psql.shell:
 	docker compose exec psql bash
 
+psql.logs:
+	docker compose logs psql
 
 
 mysql.up:
@@ -63,22 +67,29 @@ mysql.shell:
 
 
 starrocks.up:
-	docker compose up -d starrocks-be-0
-	docker compose up -d starrocks-fe-0
+	docker compose up -d dev.db
+	docker compose up -d setup.db
 
 starrocks.down:
-	docker compose down starrocks-fe-0
-	docker compose down starrocks-be-0
+	docker compose down setup.db
+	docker compose down dev.db
 
 starrocks.shell:
-	docker compose exec starrocks-fe-0 bash
+	docker compose exec dev.db bash
+
+starrocks.setup:
+	docker compose up setup.db
+
+starrocks.logs:
+	docker compose logs dev.db
+	docker compose logs setup.db
+
 
 all.down:
 	docker compose down dbt
-	docker compose down starrocks-fe-0
-	docker compose down starrocks-be-0
+	docker compose down setup.db
+	docker compose down dev.db
 	docker compose up -d psql
-
 
 # run:
 # 	docker run --rm -it \

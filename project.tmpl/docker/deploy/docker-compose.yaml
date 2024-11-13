@@ -3,11 +3,7 @@ services:
   dbt:
     #build: .
     image: ${DEV_IMAGE}
-    environment:
-      - TZ=Asia/Macau
-      - DAGSTER_POSTGRES_USER=postgres_user
-      - DAGSTER_POSTGRES_PASSWORD=postgres_password
-      - DAGSTER_POSTGRES_DB=postgres_db
+    container_name: dbt
     #profiles: ["starrocks","mssql","all"]
     ports:
       - "3000:3000"
@@ -15,17 +11,21 @@ services:
     expose:
       - "3000"
       - "4000"
-    networks:
-      - development
+    environment:
+      TZ: "Asia/Macau"
+      DAGSTER_POSTGRES_USER: "postgres_user"
+      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
+      DAGSTER_POSTGRES_DB: "postgres_db"
     volumes:
       - ../../src/dbt/.dbt/:/root/.dbt/
       - ../../src/dbt:/opt/dbt
       - ../../src/tmpl_dagster/dagster_home:/opt/dagster/dagster_home
       - ../../src/tmpl_dagster/app:/opt/dagster/app
     working_dir: /opt/dagster/dagster_home
-#     entrypoint: /bin/bash
-#     stdin_open: true
-#     tty: true
+    networks:
+      - development
+    depends_on:
+      - psql
     command:
       - /bin/bash
       - -c
@@ -35,6 +35,19 @@ services:
         dagster-webserver -h "0.0.0.0" -p "3000" -w ${DAGSTER_HOME}/workspace.yaml &
         while ! nc -z 0.0.0.0 3000; do echo 'Waiting for webserver...'; sleep 1; done;
         /usr/local/bin/python3.10 /usr/local/bin/dagster-daemon run
+
+
+  psql:
+    image: postgres:15
+    container_name: psql
+    environment:
+      POSTGRES_USER: "postgres_user"
+      POSTGRES_PASSWORD: "postgres_password"
+      POSTGRES_DB: "postgres_db"
+    ports:
+      - "5432:5432"
+    networks:
+      - development
 
 
 networks:

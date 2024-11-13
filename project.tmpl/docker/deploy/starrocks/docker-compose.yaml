@@ -1,64 +1,44 @@
 services:
 
-  starrocks-fe-0:
-    # image: starrocks/fe-ubuntu:latest
-    image: starrocks/fe-ubuntu:3.3-latest
+  dev.db:
+    image: ${DEV_DB_IMAGE}
     profiles: ["starrocks"]
-    hostname: starrocks-fe-0
-    container_name: starrocks-fe-0
-    command:
-      - /bin/bash
-      - -c
-      - |
-        /opt/starrocks/fe_entrypoint.sh starrocks-fe-0
-    environment:
-      - HOST_TYPE=FQDN
-      - TZ=Asia/Macau
-    networks:
-      - development
+    hostname: dev.db
+    container_name: dev.db
+    user: root
     ports:
-      - "8030:8030"
-      - "9020:9020"
-      - "9030:9030"
+      - 9030:9030
+      - 8030:8030
+      - 8040:8040
+    environment:
+      DB_NAME: ${DEV_DB_NAME}
+    working_dir: ${DB_HOME}
+    command: /bin/bash -c /data/deploy/entrypoint.sh
     volumes:
-       - ./starrocks/scripts:/opt/starrocks/scripts
-       - singleton_fe0_data:/opt/starrocks/fe/meta
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9030"]
-      interval: 5s
-      timeout: 5s
-      retries: 30
-
-  starrocks-be-0:
-    #image: starrocks/be-ubuntu:latest
-    image: starrocks/be-ubuntu:3.3-latest
-    profiles: ["starrocks", "all"]
-    hostname: starrocks-be-0
-    container_name: starrocks-be-0
-    command:
-      - /bin/bash
-      - -c
-      - |
-        /opt/starrocks/be_entrypoint.sh starrocks-fe-0
-    environment:
-      - HOST_TYPE=FQDN
-      - TZ=Asia/Macau
+      - ./.data/dev_${DEV_DB_NAME}_starrocks:/starrocks/data
+      - ./starrocks/scripts:${DB_HOME}
     networks:
       - development
-    ports:
-      - "8040:8040"
+
+  setup.db:
+    image: ${DEV_DB_IMAGE}
+    profiles: ["starrocks"]
+    hostname: setup.db
+    container_name: setup.db
     depends_on:
-      - starrocks-fe-0
+      - dev.db
+    environment:
+      DB_HOST: ${DEV_DB_HOST}
+      DB_NAME: ${DEV_DB_NAME}
     volumes:
-      - singleton_be0_data:/opt/starrocks/be/storage
-
-
-
-volumes:
-  singleton_fe0_data:
-    driver: local
-  singleton_be0_data:
-    driver: local
+      - ./starrocks/scripts:${DB_HOME}
+    working_dir: ${DB_HOME}
+    command: > 
+      /bin/bash -c " 
+      while ! nc -z ${DEV_DB_HOST} 9030; do echo 'Waiting for Starrocks DB...'; sleep 1; done; 
+      ${DB_HOME}/create_initial_database.sh"
+    networks:
+      - development
 
 networks:
   development:

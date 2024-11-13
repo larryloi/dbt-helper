@@ -14,21 +14,23 @@ create.project.starrocks: check_project_nulity check_app_nulity check_target_exi
 	rm -rf $${project_path}/docker/deploy/mssql && \
 	rm -rf $${project_path}/docker/deploy/mysql && \
 	find $${project_path}/src -type f -exec sed -i 's/tmpl_starrocks/$(project)_$(app)/g' {} \; && \
- 	find $${project_path}/docker -type f -exec sed -i 's/tmpl_db_type/starrocks/g' {} \; && \
- 	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BASE_VERSION/$(DEV_IMAGE_VERSION)/g' {} \; && \
- 	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BUILD_NUMBER/$(DEV_IMAGE_BUILD_NUMBER)/g' {} \; && \
- 	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_proj/$(project)/g' {} \; && \
- 	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_app/$(app)/g' {} \; && \
- 	cp -rp project.tmpl/src/tmpl_dagster $${project_path}/src 
+	find $${project_path}/docker -type f -exec sed -i 's/tmpl_db_type/starrocks/g' {} \; && \
+	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BASE_VERSION/$(DEV_IMAGE_VERSION)/g' {} \; && \
+	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BUILD_NUMBER/$(DEV_IMAGE_BUILD_NUMBER)/g' {} \; && \
+	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_proj/$(project)/g' {} \; && \
+	find $${project_path}/docker/make.env/project.env -type f -exec sed -i 's/tmpl_app/$(app)/g' {} \; && \
+	cp -rp project.tmpl/src/tmpl_dagster $${project_path}/src 
 
 
 # make create.project.mssql project=dws app=aec
 create.project.mssql: check_project_nulity check_app_nulity check_target_existence
 	@project_path=../dbt_projects/$(project)_$(app) && \
-	mkdir -p ../dbt_projects/$${project_path}/src && \
-	cp -rp project.tmpl/src/tmpl_mssql/* $${project_path}/src  && \
-	cp -rp project.tmpl/src/.dbt_mssql $${project_path}/src/.dbt && \
+	mkdir -p ../dbt_projects/$${project_path}/src/dbt && \
+	cp -rp project.tmpl/src/tmpl_mssql/* $${project_path}/src/dbt  && \
+	cp -rp project.tmpl/src/.dbt_mssql $${project_path}/src/dbt/.dbt && \
 	cp -rp project.tmpl/docker $${project_path} && \
+	rm -rf $${project_path}/docker/deploy/starrocks && \
+	rm -rf $${project_path}/docker/deploy/mysql && \
 	find $${project_path}/src -type f -exec sed -i 's/tmpl_mssql/$(project)_$(app)/g' {} \; && \
 	find $${project_path}/docker -type f -exec sed -i 's/tmpl_db_type/mssql/g' {} \; && \
 	find $${project_path}/docker/make.env/base_image.env -type f -exec sed -i 's/DBT__BASE_VERSION/$(DEV_IMAGE_VERSION)/g' {} \; && \

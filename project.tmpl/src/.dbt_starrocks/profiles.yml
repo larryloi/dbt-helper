@@ -1,7 +1,7 @@
 tmpl_starrocks:
   outputs:
     dev:
-      host: starrocks-fe-0
+      host: dev.db
       password: Abcd1234
       port: 9030
       schema: dbt

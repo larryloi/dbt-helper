@@ -3,6 +3,9 @@ include Makefile.env
 vars:
 	env
 
+ps:
+	docker compose ps -a
+
 build.base:
 	docker build -t $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER) --target base .
 
@@ -19,6 +22,8 @@ dbt.down:
 dbt.shell:
 	docker compose exec dbt bash
 
+dbt.logs:
+	docker compose logs dbt
 
 
 mssql.up:
@@ -30,6 +35,16 @@ mssql.down:
 mssql.shell:
 	docker compose exec mssql bash
 
+
+
+psql.up:
+	docker compose up -d psql
+
+psql.down:
+	docker compose down psql
+
+psql.shell:
+	docker compose exec psql bash
 
 
 mysql.up:
@@ -44,39 +59,35 @@ mysql.shell:
 
 
 starrocks.up:
-	docker compose up -d starrocks-be-0
-	docker compose up -d starrocks-fe-0
+	docker compose up -d dev.db
+	docker compose up -d setup.db
 
 starrocks.down:
-	docker compose down starrocks-fe-0
-	docker compose down starrocks-be-0
+	docker compose down setup.db
+	docker compose down dev.db
 
 starrocks.shell:
-	docker compose exec starrocks-fe-0 bash
+	docker compose exec dev.db bash
 
-psql.up:
-	docker compose up -d psql
+starrocks.setup:
+	docker compose up setup.db
 
-psql.down:
-	docker compose down psql
+starrocks.logs:
+	docker compose logs dev.db
+	docker compose logs setup.db
 
-psql.shell:
-	docker compose exec psql bash
-
-run:
-	docker run --rm -it \
-	-v ./.dbt/:/root/.dbt/ \
-	-v ./:/dbt/ \
-	$(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER)
-
-#run:
-#	docker run --rm -it -v ./:/usr/app/dbt/ ghcr.io/dbt-labs/dbt-core:1.8.6
-
-ps:
-	docker compose ps
 
 all.down:
 	docker compose down dbt
-	docker compose down starrocks-fe-0
-	docker compose down starrocks-be-0
+	docker compose down setup.db
+	docker compose down dev.db
 	docker compose up -d psql
+
+# run:
+# 	docker run --rm -it \
+# 	-v ./.dbt/:/root/.dbt/ \
+# 	-v ./:/dbt/ \
+# $(IMAGE_REPO_ROOT)/$(PROJECT_NAME)-$(BASE_NAME):$(BASE_VER)
+
+#run:
+#	docker run --rm -it -v ./:/usr/app/dbt/ ghcr.io/dbt-labs/dbt-core:1.8.6
