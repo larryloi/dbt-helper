@@ -59,7 +59,8 @@ make build.dbt
 ### Create Development Project
 The below steps creates development project that including development starrocks database and dbt container
 
-#### Startup containers
+
+#### Startup containers (Starrocks)
 ```shell
 cd dbt-helper
 make create.project.starrocks project=dwd app=angel
@@ -69,8 +70,7 @@ make starrocks.up           # start up starrocks container
 make dbt.up                 # start up dbt container
 
 ```
-
-#### Prepare database schema
+#### Prepare database schema (Starrocks)
 ```shell
 make starrocks.shell
 
@@ -78,6 +78,37 @@ make starrocks.shell
 > ./setup-db.sh
 > current_version()
 > 3.3.3-312ed45
+> exit
+
+```
+
+#### Startup containers (mssql)
+```shell
+cd dbt-helper
+make create.project.mssql project=dwd app=angel
+cd ../dbt_projects/
+cd dwd_angel/docker
+make mssql.up           # start up mssql container
+make dbt.up                 # start up dbt container
+
+```
+#### Prepare database schema (mssql)
+```shell
+make mssql.shell
+
+# In mssql container
+> bash ./setup-db.sh
+
+>>> Setting up databases and permissions ...
+
+Changed database context to 'DWD'.
+Changed database context to 'DWD'.
+
+(20 rows affected)
+
+(3 rows affected)
+
+root@mssql:/home/mssql#
 > exit
 
 ```

@@ -48,7 +48,11 @@ services:
       - "5432:5432"
     networks:
       - development
+    volumes:
+      - psql-data:/var/lib/postgresql
 
+volumes:
+  psql-data:
 
 networks:
   development:

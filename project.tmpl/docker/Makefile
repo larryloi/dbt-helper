@@ -27,13 +27,13 @@ dbt.logs:
 
 
 mssql.up:
-	docker compose up -d mssql
+	docker compose up -d dev.db
 
 mssql.down:
-	docker compose down mssql
+	docker compose down dev.db
 
 mssql.shell:
-	docker compose exec mssql bash
+	docker compose exec dev.db bash
 
 
 
@@ -48,13 +48,13 @@ psql.shell:
 
 
 mysql.up:
-	docker compose up -d mysql
+	docker compose up -d dev.db
 
 mysql.down:
-	docker compose down mysql
+	docker compose down dev.db
 
 mysql.shell:
-	docker compose exec mysql bash
+	docker compose exec dev.db bash
 
 
 

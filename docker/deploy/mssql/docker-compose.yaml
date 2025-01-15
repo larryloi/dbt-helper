@@ -1,6 +1,6 @@
 services:
 
-  mssql:
+  dev.db:
     # image: mcr.microsoft.com/mssql/server:2022-CU10-ubuntu-22.04
     image: ${DEV_DB_IMAGE}
     profiles: ["mssql"]
@@ -32,10 +32,8 @@ services:
 
 volumes:
   sql-server-data:
-    driver: local
 
 
 networks:
   development:
     driver: bridge
-

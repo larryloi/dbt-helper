@@ -4,7 +4,7 @@ tmpl_mssql:
     dev:
       type: sqlserver
       driver: 'ODBC Driver 18 for SQL Server'
-      server: mssql
+      server: dev.db
       port: 1433
       database: DWD
       schema: DW_ETL

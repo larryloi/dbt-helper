@@ -4,7 +4,7 @@ include Makefile.env
 vars:
 	env
 
-# make create.project.starrocks project=dws app=aec
+# make create.project.starrocks project=dwd app=aec
 create.project.starrocks: check_project_nulity check_app_nulity check_target_existence
 	@project_path=../dbt_projects/$(project)_$(app) && \
 	mkdir -p ../dbt_projects/$${project_path}/src/dbt && \
@@ -22,7 +22,7 @@ create.project.starrocks: check_project_nulity check_app_nulity check_target_exi
 	cp -rp project.tmpl/src/tmpl_dagster $${project_path}/src 
 
 
-# make create.project.mssql project=dws app=aec
+# make create.project.mssql project=dwd app=aec
 create.project.mssql: check_project_nulity check_app_nulity check_target_existence
 	@project_path=../dbt_projects/$(project)_$(app) && \
 	mkdir -p ../dbt_projects/$${project_path}/src/dbt && \
